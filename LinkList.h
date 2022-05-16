@@ -8,6 +8,13 @@ typedef struct listnode {
 	struct listnode* next;
 }ListNode,*LinkList;
 
+/*建立发言者*/
+Talker CraftTalker(char name[NAME_LENGTH],char color) {
+	Talker talker={};
+	talker.color = color;
+	strcpy_s(talker.name, name);
+	return talker;
+}
 /*建空表*/
 LinkList InitList() {
 	LinkList p=NULL;
@@ -22,8 +29,10 @@ void Insert(LinkList* list, Talker talker) {
 }
 /*遍历*/
 void Traversal(LinkList list) {
+	int i = 1;
 	while (list) {
-		printf("1.\33[%dm%s\n",list->talker.color,list->talker.name);
+		printf("\33[%dm%d.%s\n",i,list->talker.color,list->talker.name);
 		list = list->next;
+		i++;
 	}
 }
