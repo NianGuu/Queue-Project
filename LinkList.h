@@ -32,6 +32,12 @@ LinkList InitList() {
 	LinkList p = NULL;
 	return p;
 }
+/*≈–ø’±Ì*/
+int EmptyList(LinkList list) {
+	if (!list)
+		return 1;
+	return 0;
+}
 /*≤Â»Î*/
 void Insert(LinkList* list, Talker talker) {
 	LinkList p = (LinkList)malloc(sizeof(ListNode));

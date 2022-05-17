@@ -19,16 +19,34 @@ typedef struct {
 	QNode* rear;
 }LinkQueue;
 
+/*建立句子*/
+Line CraftLine(char line[LINE_LENGTH], Talker talker) {
+	Line re;
+	strcpy_s(re.line, line);
+	re.talker = talker;
+	return re;
+}
 /*建空队*/
-void InitQueue(LinkQueue* queue) {
-	(*queue).front = NULL;
-	(*queue).rear = NULL;
+LinkQueue InitQueue() {
+	LinkQueue queue={};
+	queue.front = NULL;
+	queue.rear = NULL;
+	return queue;
 }
 /*判空队*/
 int EmptyQueue(LinkQueue queue) {
 	if (queue.front == NULL)
 		return 1;
 	return 0;
+}
+/*求队长*/
+int LengthQueue(LinkQueue queue) {
+	int i = 0;
+	while (!EmptyQueue(queue)) {
+		i++;
+		queue.front = queue.front->next;
+	}
+	return i;
 }
 /*入队*/
 int EnQueue(LinkQueue* queue, datatype x) {
@@ -73,4 +91,12 @@ int GetHead(LinkQueue queue, datatype* x) {
 		return 1;
 	*x = queue.front->data;
 	return 0;
+}
+/*遍历*/
+void Traversal(LinkQueue queue) {
+	while (!EmptyQueue(queue)) {
+		printf("\33[%dm%s:%s\n",queue.front->data.talker.color,queue.front->data.talker.name,queue.front->data.line);
+		queue.front = queue.front->next;
+	}
+	putchar(10);
 }

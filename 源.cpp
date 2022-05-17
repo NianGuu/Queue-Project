@@ -14,22 +14,26 @@
 #include"LinkList.h"
 #include"Queue.h"
 
-int ToInt32(char[]);					//字符串类型转换为整型
-void UI_ERROR();						//输入错误
+int ToInt32(char[]);						//字符串类型转换为整型
+void UI_ERROR();							//输入错误
 
-void UI_Ready();						//开始聊天UI
+void UI_Talk(LinkList, LinkQueue*);			//开始聊天UI
+void UI_Talk_Order();						//指令列表
+void UI_Talk_Order_Error();					//指令-Error
+void UI_Talk_Order_Tab(LinkList,Talker*);	//指令-tab
 
-void UI_History();						//聊天记录UI
+void UI_History(LinkQueue);					//聊天记录UI
 
-void UI_Set(LinkList*, int*);			//设置界面UI
-void UI_Set_History(int*);				//设置聊天记录上限
-void UI_Set_Talker(LinkList*);			//设置发言者
-void UI_Set_Talker_Add(LinkList*);		//添加发言者
-void UI_Set_Talker_Delete(LinkList*);	//删除发言者
+void UI_Set(LinkList*, int*);				//设置界面UI
+void UI_Set_History(int*);					//设置聊天记录上限
+void UI_Set_Talker(LinkList*);				//设置发言者
+void UI_Set_Talker_Add(LinkList*);			//添加发言者
+void UI_Set_Talker_Delete(LinkList*);		//删除发言者
 
 int main() {
-	LinkList talker = InitList();		//初始化发言者列表
-	int record = 10;					//初始化可保存聊天记录上限
+	LinkList talker = InitList();			//初始化发言者列表
+	LinkQueue history = InitQueue();		//初始化聊天记录队列
+	int record = 10;						//初始化可保存聊天记录上限
 	char choose;
 	while (TRUE) {
 		system("CLS");
@@ -38,9 +42,9 @@ int main() {
 		printf("3.设置\n");
 		choose = _getch();
 		switch (choose) {
-		case '1':UI_Ready();
-		case '2':UI_History();
-		case '3':UI_Set(&talker, &record);
+		case '1':UI_Talk(talker, &history);break;
+		case '2':UI_History(history);break;
+		case '3':UI_Set(&talker, &record);break;
 		default:continue;
 		}
 	}
@@ -54,13 +58,58 @@ void UI_ERROR() {
 	printf("\33[0B");
 	Sleep(200);
 }
+
 /*开始聊天UI*/
-void UI_Ready() {
-
+void UI_Talk(LinkList list, LinkQueue* history) {
+	system("CLS");
+	if (EmptyList(list)) {
+		printf("当前没有发言者！\n请尝试在设置中添加\n");
+		Sleep(200);
+		return;
+	}
+	Talker talkerNow = list->talker;
+	char buffer[LINE_LENGTH];
+	printf("\33[?25h/help 查看指令\n\n\n\n");
+	while (TRUE) {
+		printf("\33[%dm%s：", talkerNow.color, talkerNow.name);
+		gets_s(buffer);
+		if (buffer[0] == '/') {
+			if (!strcmp(buffer, "/help"))
+				UI_Talk_Order();
+			else if (!strcmp(buffer, "/tab"))
+				UI_Talk_Order_Tab(list,&talkerNow);
+			else if (!strcmp(buffer, "/esc"))
+				return;
+			else
+				UI_Talk_Order_Error();
+		}
+		else {
+			EnQueue(history, CraftLine(buffer, talkerNow));
+		}
+	}
 }
-/*聊天记录UI*/
-void UI_History() {
+/*指令列表*/
+void UI_Talk_Order() {
+	printf("/tab 切换发言者\n");
+	printf("/esc 退出聊天室\n");
+}
+/*指令-Error*/
+void UI_Talk_Order_Error() {
+	printf("请输入正确的指令！\n");
+}
+/*指令-tab*/
+void UI_Talk_Order_Tab(LinkList list,Talker* talker) {
+	char choose[NAME_LENGTH];
+	printf("请选择你要切换的发言者：\n");
+	Traversal(list);
+	*talker = GetTalker(list, ToInt32(gets_s(choose)));
+}
 
+/*聊天记录UI*/
+void UI_History(LinkQueue queue) {
+	system("CLS");
+	Traversal(queue);
+	_getch();
 }
 
 /*设置界面UI*/
