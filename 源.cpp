@@ -1,6 +1,7 @@
 #define TRUE 1
 #define	FALSE 0
 #define NAME_LENGTH 20
+#define SCANF_INT_LENGTH 5
 #define ERR_QUEUEEMPTY -1
 #define SUCCESS 0
 #define LINE_LENGTH 200
@@ -61,6 +62,7 @@ void UI_Ready() {
 void UI_History() {
 
 }
+
 /*设置界面UI*/
 void UI_Set(LinkList* talker, int* record) {
 	char choose;
@@ -83,9 +85,9 @@ void UI_Set(LinkList* talker, int* record) {
 /*设置历史记录上限*/
 void UI_Set_History(int* record) {
 	int i;
+	char length[SCANF_INT_LENGTH];
 	while (TRUE) {
 		system("CLS");
-		char length[NAME_LENGTH];
 		printf("当前保存聊天记录上限：%d\n", *record);
 		printf("\33[?25h你想要改成多少?\n");
 		if ((i = ToInt32(gets_s(length))) == -1) {
@@ -144,7 +146,18 @@ void UI_Set_Talker_Add(LinkList* list) {
 }
 /*删除发言者*/
 void UI_Set_Talker_Delete(LinkList* list) {
-
+	char choose[SCANF_INT_LENGTH];
+	int chooseInt;
+	while (1) {
+		printf("\33[?25h\33[20D请选择要删除的发言者：\n\n");
+		printf("\33[1A");
+		if ((chooseInt = ToInt32(gets_s(choose))) == -1) {
+			UI_ERROR();
+			continue;
+		}
+		Delete(list, chooseInt);
+		return;
+	}
 }
 
 /*字符串转换为整型*/
