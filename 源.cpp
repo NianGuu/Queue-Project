@@ -17,7 +17,7 @@
 int ToInt32(char[]);						//字符串类型转换为整型
 void UI_ERROR();							//输入错误
 
-void UI_Talk(LinkList, LinkQueue*);			//开始聊天UI
+void UI_Talk(LinkList, LinkQueue*,int);		//开始聊天UI
 void UI_Talk_Order();						//指令列表
 void UI_Talk_Order_Error();					//指令-Error
 void UI_Talk_Order_Tab(LinkList,Talker*);	//指令-tab
@@ -42,7 +42,7 @@ int main() {
 		printf("3.设置\n");
 		choose = _getch();
 		switch (choose) {
-		case '1':UI_Talk(talker, &history);break;
+		case '1':UI_Talk(talker, &history,record);break;
 		case '2':UI_History(history);break;
 		case '3':UI_Set(&talker, &record);break;
 		default:continue;
@@ -60,7 +60,7 @@ void UI_ERROR() {
 }
 
 /*开始聊天UI*/
-void UI_Talk(LinkList list, LinkQueue* history) {
+void UI_Talk(LinkList list, LinkQueue* history,int record) {
 	system("CLS");
 	if (EmptyList(list)) {
 		printf("当前没有发言者！\n请尝试在设置中添加\n");
@@ -84,7 +84,13 @@ void UI_Talk(LinkList list, LinkQueue* history) {
 				UI_Talk_Order_Error();
 		}
 		else {
-			EnQueue(history, CraftLine(buffer, talkerNow));
+			if (LengthQueue(*history) < record) {
+				EnQueue(history, CraftLine(buffer, talkerNow));
+			}
+			else {
+				EnQueue(history, CraftLine(buffer, talkerNow));
+				DeQueue(history);
+			}
 		}
 	}
 }

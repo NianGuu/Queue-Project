@@ -66,12 +66,11 @@ int EnQueue(LinkQueue* queue, datatype x) {
 	return 0;
 }
 /*³ö¶Ó*/
-int DeQueue(LinkQueue* queue, datatype* x) {
+int DeQueue(LinkQueue* queue) {
 	if (EmptyQueue(*queue))
 		return ERR_QUEUEEMPTY;
 	QNode* p = (QNode*)malloc(sizeof(QNode));
 	p = queue->front;
-	*x = p->data;
 	queue->front = p->next;
 	free(p);
 	return 0;
